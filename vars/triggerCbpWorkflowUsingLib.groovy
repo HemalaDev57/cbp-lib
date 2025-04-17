@@ -22,6 +22,6 @@ def call(Map args) {
             customHeaders: [[name: 'Authorization', value: "Bearer ${TOKEN}"]]
         )
         echo "CBP Triggered. Response: ${response.status}"
-        echo "Response body: ${response.body}"
+        echo "Response body:\n${response.getContent()}"
     }
 }
