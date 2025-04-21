@@ -14,14 +14,21 @@ def call(Map args) {
         ]
         def jsonPayload = new groovy.json.JsonBuilder(payload).toString()
 
-        def response = httpRequest(
-            httpMode: 'POST',
-            url: "${cbpUrl}/v3/components/${componentId}/trigger",
-            contentType: 'APPLICATION_JSON',
-            requestBody: jsonPayload,
-            customHeaders: [[name: 'Authorization', value: "Bearer ${TOKEN}"]]
-        )
-        echo "CBP Triggered. Response: ${response.status}"
-        echo "Response body:\n${response.getContent()}"
+        // Logging the payload for debugging
+        echo "Payload: ${jsonPayload}"
+
+        // Using curl command to trigger the CBP workflow
+        def curlCommand = """curl -X POST "${cbpUrl}/v3/components/${componentId}/trigger" \\
+            -H "Authorization: Bearer ${TOKEN}" \\
+            -H "Content-Type: application/json" \\
+            -d '${jsonPayload}'"""
+        
+        echo "Sending request to CBP with command: ${curlCommand}"
+        
+        // Execute the curl command
+        def response = sh(script: curlCommand, returnStdout: true).trim()
+
+        // Logging the response from the CBP trigger
+        echo "CBP Triggered. Response: ${response}"
     }
 }
